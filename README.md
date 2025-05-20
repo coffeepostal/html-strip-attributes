@@ -1,6 +1,6 @@
-# HTML Attribute Stripper (Except `<img>` and `<a>`)
+# HTML Attribute Stripper
 
-This simple VS Code extension removes all attributes from HTML opening tags — **except** for `<img>` and `<a>` tags, whose attributes are preserved.
+This simple VS Code extension removes all attributes from HTML opening tags — **except** for `<img>` and `<a>` tags, whose attributes are preserved by default.
 
 ---
 
