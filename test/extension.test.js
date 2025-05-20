@@ -1,15 +1,30 @@
 const assert = require('assert');
+const { transformHtml } = require('../extension-testable'); // extract logic here
 
-// You can import and use all API from the 'vscode' module
-// as well as import your extension to test it
-const vscode = require('vscode');
-// const myExtension = require('../extension');
+describe('HTML Strip Attributes', () => {
+  it('should remove all attributes by default', () => {
+    const input = '<div class="foo" id="main">Hi</div>';
+    const result = transformHtml(input, { excludedTags: [], ignoredAttributes: {}, stripOnlyAttributes: [] });
+    assert.strictEqual(result, '<div>Hi</div>');
+  });
 
-suite('Extension Test Suite', () => {
-	vscode.window.showInformationMessage('Start all tests.');
+  it('should ignore specified attributes on specified tags', () => {
+    const input = '<a href="url" class="link">Click</a>';
+    const result = transformHtml(input, {
+      excludedTags: [],
+      ignoredAttributes: { a: ['href'] },
+      stripOnlyAttributes: []
+    });
+    assert.strictEqual(result, '<a href="url">Click</a>');
+  });
 
-	test('Sample test', () => {
-		assert.strictEqual(-1, [1, 2, 3].indexOf(5));
-		assert.strictEqual(-1, [1, 2, 3].indexOf(0));
-	});
+  it('should strip only class and style when stripOnlyAttributes is set', () => {
+    const input = '<div class="foo" id="main" style="color:red">Test</div>';
+    const result = transformHtml(input, {
+      excludedTags: [],
+      ignoredAttributes: {},
+      stripOnlyAttributes: ['class', 'style']
+    });
+    assert.strictEqual(result, '<div id="main">Test</div>');
+  });
 });

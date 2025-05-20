@@ -1,28 +1,20 @@
 # Changelog
 
-All notable changes to **HTML Strip Attributes** will be documented here.
+## \[0.0.3] - 2025-05-20
 
----
+* 🔧 Added automated test suite using Mocha
+* ✅ Verified config settings apply correctly (exclusion + selective stripping)
+* 📦 Cleaned up `package.json`, removed unused dependencies
+* 🧪 Created `extension-testable.js` to improve test isolation
+* 🧹 Removed unnecessary files
 
-## [0.0.3] – 2025-05-20
+## \[0.0.2] - 2025-05-18
 
-### Added
-- 🔧 `ignoredAttributes`: New setting to preserve specific attributes globally or per tag
-- 🧼 `stripOnlyAttributes`: Optional mode to **only strip** listed attributes (e.g., `class`, `style`)
-- ⚠️ `stripOnlyAttributes` overrides `ignoredAttributes` if set
-- 📜 Documentation: Updated README to explain new features and interactions
+* 🛠 Refactored core logic into testable functions
+* 📄 Added basic usage documentation
+* 🔄 Improved settings handling and defaults
 
----
+## \[0.0.1] - 2025-05-17
 
-## [0.0.2] – 2025-05-19
-
-### Added
-- 🔁 `excludedTags`: Tag names to fully skip when stripping attributes
-- 📝 New README with example usage and configuration
-- 🧪 Extension command: `Strip HTML Attributes`
-
----
-
-## [0.0.1] – 2025-05-18
-
-- 🎉 Initial release: strips all attributes from all tags
+* 🎉 Initial release: Command to strip all attributes from HTML tags
+* ⚙ Basic support for `excludeTags`

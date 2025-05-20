@@ -1,74 +1,83 @@
 const vscode = require('vscode');
+const { validateSettings } = require('./utils/settingsValidator');
 
 function activate(context) {
-    console.log('HTML Strip Attributes extension is active!');
+	console.log('HTML Strip Attributes extension is active!');
 
-    const disposable = vscode.commands.registerCommand('extension.stripHtmlAttributes', function () {
-        const editor = vscode.window.activeTextEditor;
-        if (!editor) {
-            vscode.window.showInformationMessage('No active editor found.');
-            return;
-        }
+	const config = vscode.workspace.getConfiguration('htmlAttributeStripper');
+	try {
+		validateSettings(config);
+	} catch (err) {
+		vscode.window.showErrorMessage(`HTML Attribute Stripper: ${err.message}`);
+		return;
+	}
 
-        const document = editor.document;
-        const fullText = document.getText();
+	const disposable = vscode.commands.registerCommand('extension.stripHtmlAttributes', function () {
+		const editor = vscode.window.activeTextEditor;
+		if (!editor) {
+			vscode.window.showInformationMessage('No active editor found.');
+			return;
+		}
 
-        const config = vscode.workspace.getConfiguration('htmlAttributeStripper');
-        const excludedTags = new Set((config.get('excludedTags') || []).map(t => t.toLowerCase()));
-        const ignoredAttributesConfig = config.get('ignoredAttributes') || {};
-        const stripOnlyAttributes = new Set((config.get('stripOnlyAttributes') || []).map(a => a.toLowerCase()));
+		const document = editor.document;
+		const fullText = document.getText();
 
-        const tagRegex = /<(\w+)(\s+[^>]+)>/g;
+		const config = vscode.workspace.getConfiguration('htmlAttributeStripper');
+		const excludedTags = new Set((config.get('excludedTags') || []).map(t => t.toLowerCase()));
+		const ignoredAttributesConfig = config.get('ignoredAttributes') || {};
+		const stripOnlyAttributes = new Set((config.get('stripOnlyAttributes') || []).map(a => a.toLowerCase()));
 
-        const cleanedText = fullText.replace(tagRegex, (match, tag, attrText) => {
-            const tagName = tag.toLowerCase();
-            if (excludedTags.has(tagName)) return match;
+		const tagRegex = /<(\w+)(\s+[^>]+)>/g;
 
-            const globalIgnores = new Set(ignoredAttributesConfig['*'] || []);
-            const tagIgnores = new Set(ignoredAttributesConfig[tagName] || []);
-            const combinedIgnores = new Set([...globalIgnores, ...tagIgnores]);
+		const cleanedText = fullText.replace(tagRegex, (match, tag, attrText) => {
+			const tagName = tag.toLowerCase();
+			if (excludedTags.has(tagName)) return match;
 
-            const attrRegex = /\b([\w-]+)="[^"]*"/g;
-            const keptAttrs = [];
-            let attrMatch;
+			const globalIgnores = new Set(ignoredAttributesConfig['*'] || []);
+			const tagIgnores = new Set(ignoredAttributesConfig[tagName] || []);
+			const combinedIgnores = new Set([...globalIgnores, ...tagIgnores]);
 
-            while ((attrMatch = attrRegex.exec(attrText)) !== null) {
-                const attrName = attrMatch[1];
+			const attrRegex = /\b([\w-]+)="[^"]*"/g;
+			const keptAttrs = [];
+			let attrMatch;
 
-                // Logic priority: stripOnly mode overrides everything
-                if (stripOnlyAttributes.size > 0) {
-                    if (!stripOnlyAttributes.has(attrName.toLowerCase())) {
-                        keptAttrs.push(attrMatch[0]); // keep it
-                    }
-                } else {
-                    if (combinedIgnores.has(attrName)) {
-                        keptAttrs.push(attrMatch[0]); // keep it
-                    }
-                }
-            }
+			while ((attrMatch = attrRegex.exec(attrText)) !== null) {
+				const attrName = attrMatch[1];
 
-            const newAttrs = keptAttrs.length > 0 ? ' ' + keptAttrs.join(' ') : '';
-            return `<${tag}${newAttrs}>`;
-        });
+				// Logic priority: stripOnly mode overrides everything
+				if (stripOnlyAttributes.size > 0) {
+					if (!stripOnlyAttributes.has(attrName.toLowerCase())) {
+						keptAttrs.push(attrMatch[0]); // keep it
+					}
+				} else {
+					if (combinedIgnores.has(attrName)) {
+						keptAttrs.push(attrMatch[0]); // keep it
+					}
+				}
+			}
 
-        const fullRange = new vscode.Range(
-            document.positionAt(0),
-            document.positionAt(fullText.length)
-        );
+			const newAttrs = keptAttrs.length > 0 ? ' ' + keptAttrs.join(' ') : '';
+			return `<${tag}${newAttrs}>`;
+		});
 
-        editor.edit(editBuilder => {
-            editBuilder.replace(fullRange, cleanedText);
-        });
+		const fullRange = new vscode.Range(
+			document.positionAt(0),
+			document.positionAt(fullText.length)
+		);
 
-        vscode.window.showInformationMessage('Stripped HTML attributes using custom logic.');
-    });
+		editor.edit(editBuilder => {
+			editBuilder.replace(fullRange, cleanedText);
+		});
 
-    context.subscriptions.push(disposable);
+		vscode.window.showInformationMessage('Stripped HTML attributes using custom logic.');
+	});
+
+	context.subscriptions.push(disposable);
 }
 
-function deactivate() {}
+function deactivate() { }
 
 module.exports = {
-    activate,
-    deactivate
+	activate,
+	deactivate
 };
