@@ -2,7 +2,7 @@
   "name": "html-strip-attributes",
   "displayName": "HTML Strip Attributes",
   "description": "A VS Code extension that strips out the attributes of all of the HTML tags, excluding <src> and <a> tags by default.",
-  "version": "0.1.1",
+  "version": "0.0.3",
   "publisher": "farnsco",
   "icon": "icon.png",
   "repository": {
@@ -30,15 +30,24 @@
       "type": "object",
       "title": "HTML Attribute Stripper",
       "properties": {
-        "htmlAttributeStripper.excludedTags": {
-          "type": "array",
-          "description": "List of tag names whose attributes should not be stripped.",
-          "default": [
-            "img",
-            "a"
-          ],
-          "items": {
-            "type": "string"
+        "htmlAttributeStripper.ignoredAttributes": {
+          "type": "object",
+          "description": "Attributes to ignore (preserve), organized by tag name. Use '*' for global attributes.",
+          "default": {
+            "*": [],
+            "img": [
+              "src",
+              "alt"
+            ],
+            "a": [
+              "href"
+            ]
+          },
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       }
