@@ -8,7 +8,7 @@ This simple VS Code extension removes all attributes from HTML opening tags — 
 
 - Keeps tag names and structure intact
 - Removes attributes like `class`, `style`, `id`, `data-*`, etc.
-- Skips over selected tags (`<img>` and `<a>` by default'), leaving their attributes untouched
+- Skips over selected tags (`<img>` and `<a>` by default), leaving their attributes untouched
 
 ---
 
