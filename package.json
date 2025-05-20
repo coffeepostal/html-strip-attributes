@@ -10,6 +10,7 @@
     "url": "https://github.com/coffeepostal/html-strip-attributes"
   },
   "categories": ["Other", "Formatting"],
+  "license": "MIT",
   "engines": {
     "vscode": "^1.100.0"
   },
