@@ -27,8 +27,15 @@ function activate(context) {
 		const document = editor.document;
 		const fullText = document.getText();
 
-		// Regex: strip attributes except from <img> tags
-		const cleanedText = fullText.replace(/(<(?!img\b)(?!a\b)\w+)\s+[^>]+(>)/g, '$1$2');
+		// Get excluded tags from settings
+		const config = vscode.workspace.getConfiguration('htmlAttributeStripper');
+		const excludedTags = config.get('excludedTags') || [];
+
+		// Build dynamic regex from excluded tag list
+		const tagPattern = excludedTags.map(tag => `(?!${tag}\\b)`).join('');
+		const regex = new RegExp(`(<${tagPattern}\\w+)\\s+[^>]+(>)`, 'g');
+
+		const cleanedText = fullText.replace(regex, '$1$2');
 
 		const fullRange = new vscode.Range(
 			document.positionAt(0),
@@ -39,7 +46,7 @@ function activate(context) {
 			editBuilder.replace(fullRange, cleanedText);
 		});
 
-		vscode.window.showInformationMessage('Stripped HTML attributes (except <img>)!');
+		vscode.window.showInformationMessage('Stripped HTML attributes (except excluded tags).');
 	});
 
 	context.subscriptions.push(disposable);

@@ -1,21 +1,23 @@
-# HTML Attribute Stripper
+# HTML Strip Attributes (VS Code Extension)
 
-This simple VS Code extension removes all attributes from HTML opening tags — **except** for `<img>` and `<a>` tags, whose attributes are preserved by default.
+**HTML Strip Attributes** is a lightweight VS Code extension that removes all attributes from HTML tags — except for the ones you choose to keep.
+
+By default, it preserves attributes for `<img>` and `<a>` tags, but you can configure which tags to exclude in your VS Code `settings.json`.
 
 ---
 
-## ✅ What It Does
+## ✅ Features
 
-- Keeps tag names and structure intact
-- Removes attributes like `class`, `style`, `id`, `data-*`, etc.
-- Skips over selected tags (`<img>` and `<a>` by default), leaving their attributes untouched
+- ✂️ Strips attributes like `class`, `style`, `id`, etc.
+- 🛡️ Skips tags you specify (e.g. `<img>`, `<a>`, `<video>`)
+- 🧠 Simple regex-based processing — fast and lightweight
+- 🛠️ Works on entire files with a single command
 
 ---
 
 ## 🔧 Example
 
 ### Before:
-
 ```html
 <span class="foo" style="color:red;">Hello</span>
 <img src="cat.jpg" alt="cat" class="rounded">
@@ -24,7 +26,6 @@ This simple VS Code extension removes all attributes from HTML opening tags — 
 ```
 
 ### After:
-
 ```html
 <span>Hello</span>
 <img src="cat.jpg" alt="cat" class="rounded">
@@ -34,36 +35,49 @@ This simple VS Code extension removes all attributes from HTML opening tags — 
 
 ---
 
-## 💡 Usage
+## ⚙️ User Settings
 
-1. Open any HTML or mixed-language file (like JSX, Vue, etc.)
-2. Run the command from the Command Palette:
+You can define which tags should keep their attributes by setting the following in your `settings.json`:
+
+```json
+"htmlAttributeStripper.excludedTags": ["img", "a", "video"]
+```
+
+This makes the extension skip those tags when stripping attributes.
+
+---
+
+## 🚀 Usage
+
+1. Open an HTML file in VS Code.
+2. Run the command:
    ```
    Strip HTML Attributes
    ```
-   (`Cmd+Shift+P` or `Ctrl+Shift+P`)
+   from the Command Palette (`Cmd+Shift+P` / `Ctrl+Shift+P`).
 
 ---
 
-## ⚙️ Coming Soon
+## 🧪 Dev Details
 
-- Customizable list of tag names to preserve (via settings)
-- Option to strip only specific attributes (e.g., `style` or `class`)
-- Support for self-closing and void tags
-
----
-
-## 🛠️ Developer Note
-
-This extension uses a simple regex replacement under the hood:
+This extension dynamically builds a regex like:
 
 ```js
-const cleanedText = fullText.replace(/(<(?!img\b)(?!a\b)\w+)\s+[^>]+(>)/g, '$1$2');
+/<(?!img\b)(?!a\b)\w+)\s+[^>]+(>)/g
 ```
+
+...based on your excluded tags.
 
 ---
 
-## 📣 Feedback / Contributions
+## 🧑‍💻 Author
 
-If you have feature requests or want to contribute, open an issue or PR.  
-Built by someone who hates bloated HTML as much as you do.
+Created by **Adam Farnsworth**  
+Published under the `farnsco` namespace  
+[GitHub Repo](https://github.com/coffeepostal/html-strip-attributes)
+
+---
+
+## 📄 License
+
+MIT — see LICENSE file.
