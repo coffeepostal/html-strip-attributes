@@ -49,6 +49,14 @@
               "type": "string"
             }
           }
+        },
+        "htmlAttributeStripper.stripOnlyAttributes": {
+          "type": "array",
+          "description": "List of attribute names to strip. If this is set, ONLY these attributes will be removed.",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
         }
       }
     }
